@@ -42,6 +42,48 @@
         }}</v-btn>
       </div>
     </v-main>
+
+    <v-dialog v-model="dialog" width="500">
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Info: {{ pokeName | capitalize }}
+        </v-card-title>
+
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Types</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="type in pokeTypes" :key="type.type.name">
+                      <td>{{ type.type.name }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-col>
+            <v-col>
+              <v-card>
+                <v-img :src="pokeSprite" max-width="200"></v-img>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-card> </v-card>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialog = false"> OK </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -68,6 +110,11 @@ export default {
     nextUrl: null,
 
     loading: false,
+
+    dialog: false,
+    pokeName: "",
+    pokeSprite: "",
+    pokeTypes: []
   }),
   created() {
     this.request();
@@ -97,9 +144,16 @@ export default {
       let api = this.prevUrl;
       this.callRequest(api);
     },
-    getInfo(id) {
-      alert(id);
-    }
+    getInfo(data) {
+      let api = `https://pokeapi.co/api/v2/pokemon/${data.id}`;
+      this.axios.get(api).then((response) => {
+        this.pokeName = response.data.name;
+        this.pokeSprite = response.data.sprites.front_default;
+        this.pokeTypes = response.data.types;
+        console.log(this.pokeTypes);
+        this.dialog = true;
+      });
+    },
   },
   computed: {
     prevDisabled() {
@@ -107,6 +161,14 @@ export default {
     },
     nextDisabled() {
       return this.nextUrl == null;
+    },
+  },
+  filters: {
+    capitalize(value) {
+      const str = value;
+      const str2 = str.charAt(0).toUpperCase() + str.slice(1);
+      console.log(str2);
+      return str2;
     },
   },
 };
@@ -122,5 +184,8 @@ export default {
 .loading-progress {
   margin-bottom: 20px;
   text-align: center;
+}
+.v-card__text {
+  margin-top: 15px;
 }
 </style>
