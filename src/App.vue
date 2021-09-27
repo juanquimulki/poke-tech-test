@@ -24,6 +24,7 @@
           :fields="tableFields"
           :items="items"
           v-if="!loading"
+          @details="getInfo"
         ></PokeTable>
         <div class="loading-progress" v-else>
           <v-progress-circular
@@ -53,7 +54,7 @@ export default {
   components: { PokeTable },
 
   data: () => ({
-    tableFields: ["Id", "Name", "Url"],
+    tableFields: ["Id", "Name", "Url", "Actions"],
 
     items: [],
 
@@ -96,6 +97,9 @@ export default {
       let api = this.prevUrl;
       this.callRequest(api);
     },
+    getInfo(id) {
+      alert(id);
+    }
   },
   computed: {
     prevDisabled() {
