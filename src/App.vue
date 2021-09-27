@@ -17,15 +17,21 @@
             ><v-btn color="primary" elevation="2" @click="request"
               >REQUEST</v-btn
             >
-            <v-progress-circular
-              v-if="spinner"
-              indeterminate
-              color="red"
-            ></v-progress-circular>
           </v-col>
         </v-row>
 
-        <PokeTable :fields="tableFields" :items="items"></PokeTable>
+        <PokeTable
+          :fields="tableFields"
+          :items="items"
+          v-if="!loading"
+        ></PokeTable>
+        <div class="loading-progress" v-else>
+          <v-progress-circular
+            v-if="loading"
+            indeterminate
+            color="red"
+          ></v-progress-circular>
+        </div>
 
         <v-btn elevation="2" :disabled="prevDisabled" @click="prevPage">{{
           prevLabel
@@ -33,11 +39,6 @@
         <v-btn elevation="2" :disabled="nextDisabled" @click="nextPage">{{
           nextLabel
         }}</v-btn>
-        <v-progress-circular
-          v-if="spinner"
-          indeterminate
-          color="red"
-        ></v-progress-circular>
       </div>
     </v-main>
   </v-app>
@@ -65,42 +66,35 @@ export default {
     prevUrl: null,
     nextUrl: null,
 
-    spinner: false,
+    loading: false,
   }),
   created() {
     this.request();
   },
   methods: {
+    callRequest(api) {
+      this.loading = true;
+      this.axios.get(api).then((response) => {
+        console.log(response.data);
+        this.items = response.data.results;
+        this.nextUrl = response.data.next;
+        this.prevUrl = response.data.previous;
+        this.loading = false;
+      });
+    },
     request() {
       let page = this.paging;
       console.log(this.paging);
       let api = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${page}`;
-      this.axios.get(api).then((response) => {
-        console.log(response.data);
-        this.items = response.data.results;
-        this.nextUrl = response.data.next;
-        this.prevUrl = response.data.previous;
-      });
+      this.callRequest(api);
     },
     nextPage() {
-      this.spinner = true;
       let api = this.nextUrl;
-      this.axios.get(api).then((response) => {
-        console.log(response.data);
-        this.items = response.data.results;
-        this.nextUrl = response.data.next;
-        this.prevUrl = response.data.previous;
-        this.spinner = false;
-      });
+      this.callRequest(api);
     },
     prevPage() {
       let api = this.prevUrl;
-      this.axios.get(api).then((response) => {
-        console.log(response.data);
-        this.items = response.data.results;
-        this.nextUrl = response.data.next;
-        this.prevUrl = response.data.previous;
-      });
+      this.callRequest(api);
     },
   },
   computed: {
@@ -120,5 +114,9 @@ export default {
 }
 .v-btn {
   margin-right: 5px;
+}
+.loading-progress {
+  margin-bottom: 20px;
+  text-align: center;
 }
 </style>
