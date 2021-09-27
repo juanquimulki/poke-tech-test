@@ -14,7 +14,7 @@
             ></v-combobox>
           </v-col>
           <v-col cols="12" xs="1" sm="3" md="3" lg="2"
-            ><v-btn color="primary" elevation="2">REQUEST</v-btn>
+            ><v-btn color="primary" elevation="2" @click="request">REQUEST</v-btn>
             <v-progress-circular
               v-if="spinner"
               indeterminate
@@ -96,6 +96,16 @@ export default {
     },
   },
   methods: {
+    request() {
+    let page = this.paging[0];
+    let api = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${page}`;
+    this.axios.get(api).then((response) => {
+      console.log(response.data);
+      this.items = response.data.results;
+      this.nextUrl = response.data.next;
+      this.prevUrl = response.data.previous;
+    });      
+    },
     nextPage() {
       this.spinner = true;
       let api = this.nextUrl;
