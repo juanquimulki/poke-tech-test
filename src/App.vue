@@ -1,12 +1,15 @@
 <template>
   <v-app>
-    Hello World!
+    <v-app-bar app color="primary" dark> Pokedex </v-app-bar>
+    <v-main>
+      <div class="content">Hello World!</div>
+    </v-main>
   </v-app>
 </template>
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
 
   components: {},
 
@@ -15,3 +18,9 @@ export default {
   }),
 };
 </script>
+
+<style scoped>
+.content {
+  padding: 15px;
+}
+</style>
