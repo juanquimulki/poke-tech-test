@@ -19,7 +19,7 @@
                 class="ma-2"
                 color="accent"
                 dark
-                @click="info(getIdFromUrl(item.url), item.name)"
+                @click="info(getIdFromUrl(item.url))"
               >
                 <v-icon dark> mdi-magnify </v-icon>
               </v-btn>
@@ -39,9 +39,8 @@ export default {
     return {};
   },
   methods: {
-    info(id, name) {
-      let payload = { id, name };
-      this.$emit("details", payload);
+    info(id) {
+      this.$emit("details", id);
     },
     getIdFromUrl(value) {
       let array = value.split("/");
