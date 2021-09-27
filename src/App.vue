@@ -75,8 +75,9 @@ export default {
   components: { PokeTable, PokeInfo },
 
   data: () => ({
-    tableFields: ["Id", "Name", "Url", "Actions"],
+    API_URL: "https://pokeapi.co/api/v2",
 
+    tableFields: ["Id", "Name", "Url", "Actions"],
     items: [],
 
     paging: 5,
@@ -114,7 +115,7 @@ export default {
     },
     request() {
       let page = this.paging;
-      let api = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${page}`;
+      let api = `${this.API_URL}/pokemon?offset=0&limit=${page}`;
       this.callRequest(api);
     },
     nextPage() {
@@ -128,13 +129,13 @@ export default {
     getInfo(id) {
       this.pokeInfo = false;
 
-      let api1 = `https://pokeapi.co/api/v2/pokemon/${id}`;
+      let api1 = `${this.API_URL}/pokemon/${id}`;
       this.axios.get(api1).then((response) => {
         this.pokeName = response.data.name;
         this.pokeSprite = response.data.sprites.front_default;
         this.pokeTypes = response.data.types;
 
-        let api2 = `https://pokeapi.co/api/v2/evolution-chain/${id}`;
+        let api2 = `${this.API_URL}/evolution-chain/${id}`;
         this.axios
           .get(api2)
           .then((response) => {
