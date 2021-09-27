@@ -14,7 +14,9 @@
             ></v-combobox>
           </v-col>
           <v-col cols="12" xs="1" sm="3" md="3" lg="2"
-            ><v-btn color="primary" elevation="2" @click="request">REQUEST</v-btn>
+            ><v-btn color="primary" elevation="2" @click="request"
+              >REQUEST</v-btn
+            >
             <v-progress-circular
               v-if="spinner"
               indeterminate
@@ -23,24 +25,7 @@
           </v-col>
         </v-row>
 
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-left">Id</th>
-                <th class="text-left">Name</th>
-                <th class="text-left">Url</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in items" :key="item.name">
-                <td>{{ item.url | getIdFromUrl }}</td>
-                <td>{{ item.name | capitalize }}</td>
-                <td>{{ item.url }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
+        <PokeTable :fields="tableFields" :items="items"></PokeTable>
 
         <v-btn elevation="2" :disabled="prevDisabled" @click="prevPage">{{
           prevLabel
@@ -48,21 +33,30 @@
         <v-btn elevation="2" :disabled="nextDisabled" @click="nextPage">{{
           nextLabel
         }}</v-btn>
+        <v-progress-circular
+          v-if="spinner"
+          indeterminate
+          color="red"
+        ></v-progress-circular>
       </div>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import PokeTable from "./components/PokeTable.vue";
+
 export default {
   name: "App",
 
-  components: {},
+  components: { PokeTable },
 
   data: () => ({
+    tableFields: ["Id", "Name", "Url"],
+
     items: [],
 
-    paging: [5],
+    paging: 5,
     recordsPaging: [5, 10, 20, 50, 100],
 
     prevLabel: "<< PREV",
@@ -74,37 +68,19 @@ export default {
     spinner: false,
   }),
   created() {
-    let api = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=5";
-    this.axios.get(api).then((response) => {
-      console.log(response.data);
-      this.items = response.data.results;
-      this.nextUrl = response.data.next;
-      this.prevUrl = response.data.previous;
-    });
-  },
-  filters: {
-    capitalize(value) {
-      const str = value;
-      const str2 = str.charAt(0).toUpperCase() + str.slice(1);
-      console.log(str2);
-      return str2;
-    },
-    getIdFromUrl(value) {
-      let array = value.split("/");
-      console.log(JSON.stringify(array));
-      return array[6];
-    },
+    this.request();
   },
   methods: {
     request() {
-    let page = this.paging[0];
-    let api = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${page}`;
-    this.axios.get(api).then((response) => {
-      console.log(response.data);
-      this.items = response.data.results;
-      this.nextUrl = response.data.next;
-      this.prevUrl = response.data.previous;
-    });      
+      let page = this.paging;
+      console.log(this.paging);
+      let api = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${page}`;
+      this.axios.get(api).then((response) => {
+        console.log(response.data);
+        this.items = response.data.results;
+        this.nextUrl = response.data.next;
+        this.prevUrl = response.data.previous;
+      });
     },
     nextPage() {
       this.spinner = true;
