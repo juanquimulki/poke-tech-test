@@ -16,6 +16,12 @@ export default {
   data: () => ({
     //
   }),
+  created() {
+    let api = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=200";
+    this.axios.get(api).then((response) => {
+      console.log(response.data);
+    });
+  },
 };
 </script>
 
