@@ -43,104 +43,36 @@
       </div>
     </v-main>
 
-    <v-dialog v-model="dialog" width="500">
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          Info: {{ pokeName | capitalize }}
-        </v-card-title>
+    <PokeInfo
+      :dialog="pokeInfo"
+      :pokeName="pokeName"
+      :pokeTypes="pokeTypes"
+      :pokeSprite="pokeSprite"
+      :pokeEvolution="pokeEvolution"
+      @close="pokeInfo = false"
+      @goEvolution="getInfo"
+    ></PokeInfo>
 
-        <v-card-text>
-          Details
-          <v-row>
-            <v-col>
-              <v-simple-table>
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Types</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="type in pokeTypes" :key="type.type.name">
-                      <td>{{ type.type.name }}</td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col>
-              <v-card>
-                <v-img :src="pokeSprite" max-width="200"></v-img>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              Evolution Chain
-              <v-simple-table v-if="evolution.length > 0">
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Species</th>
-                      <th class="text-left">Url</th>
-                      <th class="text-left">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in evolution" :key="item.species.name">
-                      <td>{{ item.species.name }}</td>
-                      <td>{{ item.species.url }}</td>
-                      <td>
-                        <v-btn small @click="goEvolution(item.species.url)"
-                          >Go...</v-btn
-                        >
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-              <div class="no-records" v-else>
-                (no records...)
-              </div>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false"> OK </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-snackbar
-      v-model="snackbar"
-    >
+    <v-snackbar v-model="snackbar">
       {{ snackbarText }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="pink"
-          text
-          v-bind="attrs"
-          @click="snackbar = false"
-        >
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
           Close
         </v-btn>
       </template>
-    </v-snackbar>    
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
 import PokeTable from "./components/PokeTable.vue";
+import PokeInfo from "./components/PokeInfo.vue";
 
 export default {
   name: "App",
 
-  components: { PokeTable },
+  components: { PokeTable, PokeInfo },
 
   data: () => ({
     tableFields: ["Id", "Name", "Url", "Actions"],
@@ -158,14 +90,14 @@ export default {
 
     loading: false,
 
-    dialog: false,
+    pokeInfo: false,
     snackbar: false,
     snackbarText: null,
 
     pokeName: "",
     pokeSprite: "",
     pokeTypes: [],
-    evolution: [],
+    pokeEvolution: [],
   }),
   created() {
     this.request();
@@ -194,6 +126,8 @@ export default {
       this.callRequest(api);
     },
     getInfo(id) {
+      this.pokeInfo = false;
+
       let api1 = `https://pokeapi.co/api/v2/pokemon/${id}`;
       this.axios.get(api1).then((response) => {
         this.pokeName = response.data.name;
@@ -201,18 +135,21 @@ export default {
         this.pokeTypes = response.data.types;
 
         let api2 = `https://pokeapi.co/api/v2/evolution-chain/${id}`;
-        this.axios.get(api2).then((response) => {
-          this.evolution = response.data.chain.evolves_to;
-        }).catch(()=>{
-          this.snackbarText = "Error 404: Not Found.";
-          this.snackbar =  true;
-        });
+        this.axios
+          .get(api2)
+          .then((response) => {
+            this.pokeEvolution = response.data.chain.evolves_to;
+          })
+          .catch(() => {
+            this.snackbarText = "Error 404: Not Found.";
+            this.snackbar = true;
+          });
 
-        this.dialog = true;
+        this.pokeInfo = true;
       });
     },
     goEvolution(value) {
-      this.dialog = false;
+      this.pokeInfo = false;
       let array = value.split("/");
       let id = array[6];
       this.getInfo(id);
@@ -224,13 +161,6 @@ export default {
     },
     nextDisabled() {
       return this.nextUrl == null;
-    },
-  },
-  filters: {
-    capitalize(value) {
-      const str = value;
-      const str2 = str.charAt(0).toUpperCase() + str.slice(1);
-      return str2;
     },
   },
 };
@@ -246,12 +176,5 @@ export default {
 .loading-progress {
   margin-bottom: 20px;
   text-align: center;
-}
-.v-card__text {
-  margin-top: 15px;
-}
-.no-records {
-  font-weight: bold;
-  font-size: 10pt;
 }
 </style>
