@@ -45,7 +45,6 @@ export default {
     },
     getIdFromUrl(value) {
       let array = value.split("/");
-      console.log(JSON.stringify(array));
       return array[6];
     },
   },
@@ -53,7 +52,6 @@ export default {
     capitalize(value) {
       const str = value;
       const str2 = str.charAt(0).toUpperCase() + str.slice(1);
-      console.log(str2);
       return str2;
     },
   },

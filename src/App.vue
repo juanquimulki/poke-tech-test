@@ -73,7 +73,27 @@
               </v-card>
             </v-col>
           </v-row>
-          <v-card> </v-card>
+          <v-row>
+            <v-col>
+              Evolution Chain
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Specie</th>
+                      <th class="text-left">Url</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Alligator</td>
+                      <td><a href="https://www.google.com" target="_blank">https://www.google.com</a></td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-col>              
+          </v-row>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -114,7 +134,7 @@ export default {
     dialog: false,
     pokeName: "",
     pokeSprite: "",
-    pokeTypes: []
+    pokeTypes: [],
   }),
   created() {
     this.request();
@@ -123,7 +143,6 @@ export default {
     callRequest(api) {
       this.loading = true;
       this.axios.get(api).then((response) => {
-        console.log(response.data);
         this.items = response.data.results;
         this.nextUrl = response.data.next;
         this.prevUrl = response.data.previous;
@@ -132,7 +151,6 @@ export default {
     },
     request() {
       let page = this.paging;
-      console.log(this.paging);
       let api = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${page}`;
       this.callRequest(api);
     },
@@ -150,7 +168,6 @@ export default {
         this.pokeName = response.data.name;
         this.pokeSprite = response.data.sprites.front_default;
         this.pokeTypes = response.data.types;
-        console.log(this.pokeTypes);
         this.dialog = true;
       });
     },
@@ -167,7 +184,6 @@ export default {
     capitalize(value) {
       const str = value;
       const str2 = str.charAt(0).toUpperCase() + str.slice(1);
-      console.log(str2);
       return str2;
     },
   },
