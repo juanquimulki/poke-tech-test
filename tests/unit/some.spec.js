@@ -4,7 +4,7 @@ import PokeInfo from '@/components/PokeInfo.vue'
 
 describe('App', () => {
   // Inspect the raw component options
-  it('has data', () => {
+  it('App has data', () => {
     expect(typeof App.data).toBe('function')
   })
 })
