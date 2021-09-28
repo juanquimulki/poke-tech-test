@@ -21,6 +21,6 @@ describe("PokeInfo.vue", () => {
         dialog: true        
       }
     });
-    expect(wrapper.find("v-card-title").text()).toBe("Info: " + msg);
+    expect(wrapper.find('[data-testid="pokemon-title"]').text()).toBe("Info: " + msg);
   });
 });

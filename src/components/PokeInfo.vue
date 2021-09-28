@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="dialog" width="500">
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
+        <v-card-title class="text-h5 grey lighten-2" data-testid="pokemon-title">
           Info: {{ pokeName | capitalize }}
         </v-card-title>
 
