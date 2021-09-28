@@ -1,4 +1,4 @@
-# pokedex
+# Pokedex (by Juan M. Mulki A.)
 
 ## Project setup
 ```
