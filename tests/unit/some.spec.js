@@ -8,14 +8,6 @@ describe('App', () => {
   it('App has data', () => {
     expect(typeof App.data).toBe('function')
   })
-
-  // it("Request should show error message with certain high ID", () => {
-  //   const wrapper = shallowMount(App);
-  //   let id = "1000";
-  //   expect(wrapper.vm.snackbar).toBe(false); // snackbar is hidden
-  //   wrapper.vm.getInfo(id);  // calling component method
-  //   expect(wrapper.vm.snackbar).toBe(true); // result should be the snackbar
-  // });  
 })
 
 describe("PokeInfo.vue", () => {
